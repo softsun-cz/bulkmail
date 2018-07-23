@@ -140,9 +140,9 @@ apt-get -y install python-certbot-nginx -t jessie-backports
 apt-get -y install opendkim opendkim-tools nginx perl sudo php5-fpm
 DEBIAN_FRONTEND=noninteractive apt-get -y install postfix
 
-/etc/init.d/nginx stop
+/etc/init.d/nginx restart
 letsencrypt certonly --standalone -d mail.${domain} -m info@"${domain}"
-/etc/init.d/nginx start
+/etc/init.d/nginx restart
 
 
 echo "%www-data ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
@@ -239,7 +239,7 @@ echo "proxy_pass http://${default_sender_ip};" >> /etc/nginx/sites-enabled/defau
 echo "  }" >> /etc/nginx/sites-enabled/default
 echo "  }" >> /etc/nginx/sites-enabled/default
 
-echo "server {" > /etc/nginx/sites-enabled/default 
+echo "server {" >> /etc/nginx/sites-enabled/default 
 echo "listen 443 ssl;" >> /etc/nginx/sites-enabled/default 
 echo "ssl_certificate /etc/letsencrypt/live/mail.${domain}/fullchain.pem;" >> /etc/nginx/sites-enabled/default 
 echo "ssl_certificate_key /etc/letsencrypt/live/mail.${domain}/privkey.pem;" >> /etc/nginx/sites-enabled/default 
@@ -252,20 +252,20 @@ echo "  }" >> /etc/nginx/sites-enabled/default
 echo "  }" >> /etc/nginx/sites-enabled/default
 
 
-echo "server {" > /etc/nginx/sites-enabled/default 
+echo "server {" >> /etc/nginx/sites-enabled/default 
 echo "listen 80;" >> /etc/nginx/sites-enabled/default 
 echo "root /var/www/html/;" >> /etc/nginx/sites-enabled/default 
 echo "index index.html index.htm index.nginx-debian.html index.php;" >> /etc/nginx/sites-enabled/default 
 echo "server_name mail.${domain};" >> /etc/nginx/sites-enabled/default 
 echo "location / {" >> /etc/nginx/sites-enabled/default 
-echo "try_files $uri $uri/ /index.html =404;" >> /etc/nginx/sites-enabled/default 
+echo "try_files \$uri \$uri/ /index.html =404;" >> /etc/nginx/sites-enabled/default 
 echo "  }" >> /etc/nginx/sites-enabled/default 
 
  echo "  location ~ \.php$ { " >> /etc/nginx/sites-enabled/default 
-               echo "  try_files $uri =404;" >> /etc/nginx/sites-enabled/default 
+               echo "  try_files \$uri =404;" >> /etc/nginx/sites-enabled/default 
                echo "  include fastcgi_params;" >> /etc/nginx/sites-enabled/default 
                echo "  fastcgi_pass unix:/var/run/php5-fpm.sock;" >> /etc/nginx/sites-enabled/default 
-               echo "  fastcgi_split_path_info ^(.+\.php)(.*)$;" >> /etc/nginx/sites-enabled/default 
+               echo "  fastcgi_split_path_info ^(.+\.php)(.*)\$;" >> /etc/nginx/sites-enabled/default 
                 echo " fastcgi_param  SCRIPT_FILENAME $document_root$fastcgi_script_name;" >> /etc/nginx/sites-enabled/default 
         echo " } " >> /etc/nginx/sites-enabled/default 
 
