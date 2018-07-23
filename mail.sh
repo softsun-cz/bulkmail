@@ -142,7 +142,7 @@ apt-get -y install opendkim opendkim-tools nginx perl sudo php5-fpm
 DEBIAN_FRONTEND=noninteractive apt-get -y install postfix
 
 /etc/init.d/nginx stop
-letsencrypt certonly --standalone -d mail.${domain} -m info@"${domain}"
+letsencrypt certonly --agree-tos --standalone -d mail.${domain} -m info@"${domain}"
 /etc/init.d/nginx restart
 
 
@@ -315,7 +315,7 @@ echo "                TXT     v=spf1 ip4:${IP_ADRESA} -all" >> /var/www/html/mai
 echo "		A       ${sender}" >> /var/www/html/mail.txt
 echo "mail		A       ${IP_ADRESA}" >> /var/www/html/mail.txt
 
-for i in $(seq 0 $SEQUENCE); 
+for i in $(seq 0 $SEQUENCE);
 do 
 DOCASNE="$((IPKA4 + i))"
 echo "mail${i}  A       ${IPKA1}.${IPKA2}.${IPKA3}.${DOCASNE}" >> /var/www/html/mail.txt
