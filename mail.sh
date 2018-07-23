@@ -326,7 +326,10 @@ do
 DOCASNE="$((IPKA4 + i))"
 echo "      TXT v=spf1 ip4:${IPKA1}.${IPKA2}.${IPKA3}.${DOCASNE} -all" >> /var/www/html/mail.txt
 done
-resultDKIM=$(cat /etc/opendkim/keys/$domain/mail.txt | sed 's/\t  //g')
+
+#resultDKIM=$(cat /etc/opendkim/keys/$domain/mail.txt | sed 's/\t  //g')
+resultDKIM=$(sed -e 's/"//g' -e "s/.*(\(.*\) ).*/\1;/" <<< $(cat mail.txt))
+
 echo $resultDKIM  | sed 's/"//g' >> /var/www/html/mail.txt
 echo "========= NASTAVENI PTR ==========" >> /var/www/html/mail.txt
 echo "${IP_ADRESA} PTR ZAZNAM mail.${domain}" >> /var/www/html/mail.txt
