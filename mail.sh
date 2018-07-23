@@ -140,7 +140,7 @@ apt-get -y install python-certbot-nginx -t jessie-backports
 apt-get -y install opendkim opendkim-tools nginx perl sudo php5-fpm
 DEBIAN_FRONTEND=noninteractive apt-get -y install postfix
 
-/etc/init.d/nginx restart
+/etc/init.d/nginx stop
 letsencrypt certonly --standalone -d mail.${domain} -m info@"${domain}"
 /etc/init.d/nginx restart
 
@@ -266,7 +266,7 @@ echo "  }" >> /etc/nginx/sites-enabled/default
                echo "  include fastcgi_params;" >> /etc/nginx/sites-enabled/default 
                echo "  fastcgi_pass unix:/var/run/php5-fpm.sock;" >> /etc/nginx/sites-enabled/default 
                echo "  fastcgi_split_path_info ^(.+\.php)(.*)\$;" >> /etc/nginx/sites-enabled/default 
-                echo " fastcgi_param  SCRIPT_FILENAME $document_root$fastcgi_script_name;" >> /etc/nginx/sites-enabled/default 
+                echo " fastcgi_param  SCRIPT_FILENAME \$document_root\$fastcgi_script_name;" >> /etc/nginx/sites-enabled/default 
         echo " } " >> /etc/nginx/sites-enabled/default 
 
 
