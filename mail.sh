@@ -235,7 +235,7 @@ echo "root /var/www/html/;" >> /etc/nginx/sites-enabled/default
 echo "index index.html index.htm index.nginx-debian.html index.php;" >> /etc/nginx/sites-enabled/default 
 echo "server_name ${domain} www.${domain};" >> /etc/nginx/sites-enabled/default 
 echo "location / {" >> /etc/nginx/sites-enabled/default 
-echo "proxy_pass http://81.0.208.20;" >> /etc/nginx/sites-enabled/default 
+echo "proxy_pass http://${default_sender_ip};" >> /etc/nginx/sites-enabled/default 
 echo "  }" >> /etc/nginx/sites-enabled/default
 echo "  }" >> /etc/nginx/sites-enabled/default
 
@@ -247,7 +247,7 @@ echo "root /var/www/html/;" >> /etc/nginx/sites-enabled/default
 echo "index index.html index.htm index.nginx-debian.html index.php;" >> /etc/nginx/sites-enabled/default 
 echo "server_name ${domain} www.${domain};" >> /etc/nginx/sites-enabled/default 
 echo "location / {" >> /etc/nginx/sites-enabled/default
-echo "proxy_pass http://81.0.208.20;" >> /etc/nginx/sites-enabled/default 
+echo "proxy_pass http://${default_sender_ip};" >> /etc/nginx/sites-enabled/default 
 echo "  }" >> /etc/nginx/sites-enabled/default
 echo "  }" >> /etc/nginx/sites-enabled/default
 
