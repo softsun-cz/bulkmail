@@ -338,8 +338,8 @@ echo "==================================" >> /var/www/html/mail.txt
 
 # send to wapi
 if [ $wapi_enabled -eq 1 ]; then
-    curl --data "domain=${domain}" --data "mail_ip=${IP_ADRESA}" \
-         --data "client_ip=${IP_ADRESA}" --data "mx=mail.${domain}" \
+    curl --data "domain=${domain}" --data "mail=${IP_ADRESA}" \
+         --data "root=${IP_ADRESA}" --data "mx=mail.${domain}" \
          --data "dkim=${resultDKIM}" \
          --data "pass=${wapi_pass}" \
          "${default_wapi_url}"
