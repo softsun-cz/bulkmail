@@ -354,7 +354,7 @@ echo "      TXT v=spf1 ip4:${IPKA1}.${IPKA2}.${IPKA3}.${DOCASNE} -all" >> /var/w
 done
 
 #resultDKIM=$(cat /etc/opendkim/keys/$domain/mail.txt | sed 's/\t  //g')
-resultDKIM=$(sed -e 's/"//g' -e "s/.*(\(.*\) ).*/\1;/" -e "s/rsa-sha256/sha256/g" <<< $(cat /etc/opendkim/keys/${domain}/mail.txt))
+resultDKIM=$(sed -e 's/"//g' -e "s/.*(\(.*\) ).*/\1;/" -e "s/rsa-sha256/sha256/g" -e "s/;$//g" -e "s/ //g" <<< $(cat /etc/opendkim/keys/${domain}/mail.txt))
 
 echo $resultDKIM  | sed 's/"//g' >> /var/www/html/mail.txt
 echo "========= NASTAVENI PTR ==========" >> /var/www/html/mail.txt
