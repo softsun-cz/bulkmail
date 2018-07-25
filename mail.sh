@@ -173,18 +173,27 @@ echo "/^X-Originating-IP:/    IGNORE" >> /etc/postfix/header_checks
 
 chmod 777 /etc/postfix/header_checks
 
-echo "milter_protocol = 2" >> /etc/postfix/main.cf
-echo "milter_default_action = accept" >> /etc/postfix/main.cf
-echo "smtpd_milters = inet:localhost:12301" >> /etc/postfix/main.cf
-echo "non_smtpd_milters = inet:localhost:12301" >> /etc/postfix/main.cf
-echo "header_checks = regexp:/etc/postfix/header_checks" >> /etc/postfix/main.cf
+cp  /etc/postfix/main.cf /etc/postfix/main.cf.$$
+cat << "EOF" > /etc/postfix/main.cf
+smtpd_banner = $myhostname ESMTP $mail_name
+biff = no
+readme_directory = no
+EOF
 
+echo "milter_protocol = 2"                              >> /etc/postfix/main.cf
+echo "milter_default_action = accept"                   >> /etc/postfix/main.cf
+echo "smtpd_milters = inet:localhost:12301"             >> /etc/postfix/main.cf
+echo "non_smtpd_milters = inet:localhost:12301"         >> /etc/postfix/main.cf
+echo "header_checks = regexp:/etc/postfix/header_checks" >> /etc/postfix/main.cf
+echo "relay_domains = ${domain}"                        >> /etc/postfix/main.cf
+echo "relayhost = ${sender}"                            >> /etc/postfix/main.cf
 
 postconf -e "myhostname = mail.${domain}"
 postconf -e "mynetworks = 127.0.0.1/32 ${sender}/32"
 postconf -e "smtp_destination_concurrency_limit = ${spojeni}"
 postconf -e "smtp_destination_rate_delay = ${timeout}s"
 postconf -e "smtp_extra_recipient_limit = 10"
+postconf -e "smtpd_relay_restrictions = permit_mynetworks permit_sasl_authenticated defer_unauth_destination"
 
 postconf -e "smtpd_tls_cert_file = /etc/letsencrypt/live/mail.${domain}/fullchain.pem"
 postconf -e "smtpd_tls_key_file = /etc/letsencrypt/live/mail.${domain}/privkey.pem"
@@ -198,7 +207,7 @@ postconf -e 'smtp_tls_mandatory_protocols = !SSLv2, !SSLv3'
 postconf -e 'smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache'
 postconf -e 'smtp_tls_note_starttls_offer = yes'
 postconf -e 'smtp_enforce_tls = yes'
-postconf -e "virtual_mailbox_domains = ${domain}"
+#postconf -e "virtual_mailbox_domains = ${domain}"
 
 
 echo "@${domain} smtp:[${sender}]" > /etc/postfix/transport
