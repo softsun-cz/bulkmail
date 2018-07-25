@@ -174,6 +174,9 @@ echo "PidFile                 /var/run/opendkim/opendkim.pid" >> /etc/opendkim.c
 echo "SignatureAlgorithm      rsa-sha256" >> /etc/opendkim.conf
 echo "UserID                  opendkim:opendkim" >> /etc/opendkim.conf
 echo "Socket                  inet:12301@localhost" >> /etc/opendkim.conf
+echo "SubDomains      no"     >> /etc/opendkim.conf
+echo "SignatureAlgorithm  rsa-sha256"     >> /etc/opendkim.conf
+echo "OversignHeaders     From"  >> /etc/opendkim.conf
 
 echo "SOCKET=\"inet:12301@localhost\"" >> /etc/default/opendkim
 
@@ -236,7 +239,7 @@ echo "*@${domain} mail._domainkey.${domain}" > /etc/opendkim/SigningTable
 
 mkdir /etc/opendkim/keys/$domain
 cd /etc/opendkim/keys/$domain
-opendkim-genkey -s mail -d $domain
+opendkim-genkey -s mail -h rsa-sha256 -b 2048 -d $domain
 
 chown -R opendkim:opendkim /etc/opendkim
 
