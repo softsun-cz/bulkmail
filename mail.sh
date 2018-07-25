@@ -187,8 +187,8 @@ EOF
 
 echo "milter_protocol = 2"                              >> /etc/postfix/main.cf
 echo "milter_default_action = accept"                   >> /etc/postfix/main.cf
-echo "smtpd_milters = inet:localhost:12301"             >> /etc/postfix/main.cf
-echo "non_smtpd_milters = inet:localhost:12301"         >> /etc/postfix/main.cf
+echo "smtpd_milters = inet:127.0.0.1:12301"             >> /etc/postfix/main.cf
+echo "non_smtpd_milters = inet:127.0.0.1:12301"         >> /etc/postfix/main.cf
 echo "header_checks = regexp:/etc/postfix/header_checks" >> /etc/postfix/main.cf
 echo "relay_domains = ${domain}"                        >> /etc/postfix/main.cf
 
