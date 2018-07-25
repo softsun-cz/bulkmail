@@ -37,6 +37,10 @@ apt-get -y remove man-db install-info vim-tiny nano
 apt-get -y install curl
 passwd
 
+
+cp /etc/resolv.conf /etc/resolv.conf.$$
+echo "nameserver 8.8.8.8" > /etc/resolv.conf
+
 cat << EOF >> /etc/sysctl.conf
     net.ipv6.conf.all.disable_ipv6 = 1
     net.ipv6.conf.default.disable_ipv6 = 1
