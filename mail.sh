@@ -192,15 +192,15 @@ echo "non_smtpd_milters = inet:127.0.0.1:12301"         >> /etc/postfix/main.cf
 echo "header_checks = regexp:/etc/postfix/header_checks" >> /etc/postfix/main.cf
 echo "relay_domains = ${domain}"                        >> /etc/postfix/main.cf
 
-postconf -e "myhostname = mail.${domain}"
+postconf -e "myhostname = ${domain}"
 postconf -e "mynetworks = 127.0.0.1/32 ${sender}/32"
 postconf -e "smtp_destination_concurrency_limit = ${spojeni}"
 postconf -e "smtp_destination_rate_delay = ${timeout}s"
 postconf -e "smtp_extra_recipient_limit = 10"
 postconf -e "smtpd_relay_restrictions = permit_mynetworks permit_sasl_authenticated defer_unauth_destination"
 
-postconf -e "smtpd_tls_cert_file = /etc/letsencrypt/live/mail.${domain}/fullchain.pem"
-postconf -e "smtpd_tls_key_file = /etc/letsencrypt/live/mail.${domain}/privkey.pem"
+postconf -e "smtpd_tls_cert_file = /etc/letsencrypt/live/${domain}/fullchain.pem"
+postconf -e "smtpd_tls_key_file = /etc/letsencrypt/live/${domain}/privkey.pem"
 postconf -e 'smtpd_use_tls=yes'
 
 postconf -e 'smtp_use_tls = yes'
@@ -221,14 +221,11 @@ postconf -e "transport_maps                  =      hash:/etc/postfix/transport"
 
 
 
-mkdir /etc/opendkim
-mkdir /etc/opendkim/keys
+mkdir -p /etc/opendkim/keys
 
 echo "localhost" > /etc/opendkim/TrustedHosts
 echo "127.0.0.1" >> /etc/opendkim/TrustedHosts
 echo "${sender}" >> /etc/opendkim/TrustedHosts
-
-
 
 echo "mail._domainkey.${domain} ${domain}:mail:/etc/opendkim/keys/${domain}/mail.private" > /etc/opendkim/KeyTable
 echo "*@${domain} mail._domainkey.${domain}" > /etc/opendkim/SigningTable
@@ -331,7 +328,7 @@ echo 'echo ""' >> /var/www/html/cgi-bin/qshape.cgi
 
 chmod +x /var/www/html/cgi-bin/*
 echo "========== NASTAVENI DNS =========" > /var/www/html/mail.txt
-echo "                MX      mail.${domain}" >> /var/www/html/mail.txt
+echo "                MX      ${domain}" >> /var/www/html/mail.txt
 echo "_adsp._domainkey  TXT    dkim=all" >> /var/www/html/mail.txt
 echo "                TXT     v=spf1 ip4:${IP_ADRESA} -all" >> /var/www/html/mail.txt
 echo "		A       ${sender}" >> /var/www/html/mail.txt
@@ -354,7 +351,7 @@ resultDKIM=$(sed -e 's/"//g' -e "s/.*(\(.*\) ).*/\1;/" <<< $(cat /etc/opendkim/k
 
 echo $resultDKIM  | sed 's/"//g' >> /var/www/html/mail.txt
 echo "========= NASTAVENI PTR ==========" >> /var/www/html/mail.txt
-echo "${IP_ADRESA} PTR ZAZNAM mail.${domain}" >> /var/www/html/mail.txt
+echo "${IP_ADRESA} PTR ZAZNAM ${domain}" >> /var/www/html/mail.txt
 for i in $(seq 0 $SEQUENCE); 
 do 
 DOCASNE="$((IPKA4 + i))"
@@ -365,7 +362,7 @@ echo "==================================" >> /var/www/html/mail.txt
 # send to wapi
 if [ $wapi_enabled -eq 1 ]; then
     curl --data "domain=${domain}" --data "mail=${IP_ADRESA}" \
-         --data "root=${IP_ADRESA}" --data "mx=mail.${domain}" \
+         --data "root=${IP_ADRESA}" --data "mx=${domain}" \
          --data "dkim=${resultDKIM}" \
          --data "pass=${wapi_pass}" \
          "${default_wapi_url}"
