@@ -135,8 +135,12 @@ fi
 echo 'deb http://ftp.debian.org/debian jessie-backports main' | tee /etc/apt/sources.list.d/backports.list
 #aktualizace baliku na OS
 apt-get update
+apt update
 #instalovani zakladnich baliku
 apt-get -y install python-certbot-nginx -t jessie-backports
+apt install -y fcgiwrap
+systemctl enable fcgiwrap
+/etc/init.d/fcgiwrap start
 
 apt-get -y install opendkim opendkim-tools nginx perl sudo php5-fpm
 DEBIAN_FRONTEND=noninteractive apt-get -y install postfix
@@ -282,6 +286,13 @@ echo "  }" >> /etc/nginx/sites-enabled/default
                 echo " fastcgi_param  SCRIPT_FILENAME \$document_root\$fastcgi_script_name;" >> /etc/nginx/sites-enabled/default 
         echo " } " >> /etc/nginx/sites-enabled/default 
 
+cat << "EOF" >> /etc/nginx/sites-enabled/default
+location /cgi-bin/ {
+        root  /var/www/html/;
+        fastcgi_pass  unix:/var/run/fcgiwrap.socket;
+        include /etc/nginx/fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+EOF
 
 echo "  }" >> /etc/nginx/sites-enabled/default
 
