@@ -191,7 +191,6 @@ echo "smtpd_milters = inet:localhost:12301"             >> /etc/postfix/main.cf
 echo "non_smtpd_milters = inet:localhost:12301"         >> /etc/postfix/main.cf
 echo "header_checks = regexp:/etc/postfix/header_checks" >> /etc/postfix/main.cf
 echo "relay_domains = ${domain}"                        >> /etc/postfix/main.cf
-echo "relayhost = ${sender}"                            >> /etc/postfix/main.cf
 
 postconf -e "myhostname = mail.${domain}"
 postconf -e "mynetworks = 127.0.0.1/32 ${sender}/32"
