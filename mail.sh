@@ -143,6 +143,7 @@ DEBIAN_FRONTEND=noninteractive apt-get -y install postfix
 
 /etc/init.d/nginx stop
 letsencrypt certonly --agree-tos --standalone -d mail.${domain} -m info@"${domain}"
+letsencrypt certonly --agree-tos --standalone -d ${domain} -m info@"${domain}"
 /etc/init.d/nginx restart
 
 
@@ -239,6 +240,8 @@ chown -R opendkim:opendkim /etc/opendkim
 /etc/init.d/postfix restart
 
 
+mkdir /etc/nginx/sites-backuped/
+cp /etc/nginx/sites-enabled/default /etc/nginx/sites-backuped/default.$$
 echo "server {" > /etc/nginx/sites-enabled/default 
 echo "listen 80;" >> /etc/nginx/sites-enabled/default 
 echo "root /var/www/html/;" >> /etc/nginx/sites-enabled/default 
@@ -251,8 +254,8 @@ echo "  }" >> /etc/nginx/sites-enabled/default
 
 echo "server {" >> /etc/nginx/sites-enabled/default 
 echo "listen 443 ssl;" >> /etc/nginx/sites-enabled/default 
-echo "ssl_certificate /etc/letsencrypt/live/mail.${domain}/fullchain.pem;" >> /etc/nginx/sites-enabled/default 
-echo "ssl_certificate_key /etc/letsencrypt/live/mail.${domain}/privkey.pem;" >> /etc/nginx/sites-enabled/default 
+echo "ssl_certificate /etc/letsencrypt/live/${domain}/fullchain.pem;" >> /etc/nginx/sites-enabled/default 
+echo "ssl_certificate_key /etc/letsencrypt/live/${domain}/privkey.pem;" >> /etc/nginx/sites-enabled/default 
 echo "root /var/www/html/;" >> /etc/nginx/sites-enabled/default 
 echo "index index.html index.htm index.nginx-debian.html index.php;" >> /etc/nginx/sites-enabled/default 
 echo "server_name ${domain} www.${domain};" >> /etc/nginx/sites-enabled/default 
