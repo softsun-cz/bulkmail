@@ -192,6 +192,8 @@ biff = no
 readme_directory = no
 EOF
 
+echo "mydomain = ${domain}"                             >> /etc/postfix/main.cf
+echo "myorigin = \$mydomain"                            >> /etc/postfix/main.cf
 echo "milter_protocol = 2"                              >> /etc/postfix/main.cf
 echo "milter_default_action = accept"                   >> /etc/postfix/main.cf
 echo "smtpd_milters = inet:127.0.0.1:12301"             >> /etc/postfix/main.cf
@@ -199,7 +201,7 @@ echo "non_smtpd_milters = inet:127.0.0.1:12301"         >> /etc/postfix/main.cf
 echo "header_checks = regexp:/etc/postfix/header_checks" >> /etc/postfix/main.cf
 echo "relay_domains = ${domain}"                        >> /etc/postfix/main.cf
 
-postconf -e "myhostname = ${domain}"
+postconf -e "myhostname = mail.${domain}"
 postconf -e "mynetworks = 127.0.0.1/32 ${sender}/32"
 postconf -e "smtp_destination_concurrency_limit = ${spojeni}"
 postconf -e "smtp_destination_rate_delay = ${timeout}s"
@@ -234,18 +236,17 @@ echo "localhost" > /etc/opendkim/TrustedHosts
 echo "127.0.0.1" >> /etc/opendkim/TrustedHosts
 echo "${sender}" >> /etc/opendkim/TrustedHosts
 
-echo "mail._domainkey.${domain} ${domain}:mail:/etc/opendkim/keys/${domain}/mail.private" > /etc/opendkim/KeyTable
+echo "mail._domainkey.${domain} mail.${domain}:mail:/etc/opendkim/keys/${domain}/mail.private" > /etc/opendkim/KeyTable
 echo "*@${domain} mail._domainkey.${domain}" > /etc/opendkim/SigningTable
 
-mkdir /etc/opendkim/keys/$domain
-cd /etc/opendkim/keys/$domain
-opendkim-genkey -s mail -h rsa-sha256 -b 2048 -d $domain
-
+mkdir /etc/opendkim/keys/${domain}
+pushd /etc/opendkim/keys/${domain}
+opendkim-genkey -s mail -h rsa-sha256 -b 2048 -d ${domain}
+popd
 chown -R opendkim:opendkim /etc/opendkim
 
 /etc/init.d/opendkim restart
 /etc/init.d/postfix restart
-
 
 mkdir /etc/nginx/sites-backuped/
 cp /etc/nginx/sites-enabled/default /etc/nginx/sites-backuped/default.$$
@@ -368,10 +369,10 @@ echo "==================================" >> /var/www/html/mail.txt
 
 # send to wapi
 if [ $wapi_enabled -eq 1 ]; then
-    curl --data "domain=${domain}" --data "mail=${IP_ADRESA}" \
-         --data "root=${IP_ADRESA}" --data "mx=${domain}" \
-         --data "dkim=${resultDKIM}" \
-         --data "pass=${wapi_pass}" \
+    curl --data-urlencode "domain=${domain}" --data-urlencode "mail=${IP_ADRESA}" \
+         --data-urlencode "root=${IP_ADRESA}" --data-urlencode "mx=mail.${domain}" \
+         --data-urlencode "dkim=${resultDKIM}" \
+         --data-urlencode "pass=${wapi_pass}" \
          "${default_wapi_url}"
 fi
 
