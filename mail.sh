@@ -223,7 +223,7 @@ postconf -e 'smtp_enforce_tls = yes'
 #postconf -e "virtual_mailbox_domains = ${domain}"
 
 
-echo "@${domain} smtp:[${sender}]" > /etc/postfix/transport
+echo "${domain} smtp:[${sender}]" > /etc/postfix/transport
 postmap /etc/postfix/transport
 postconf -e "transport_maps                  =      hash:/etc/postfix/transport"
 
