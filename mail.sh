@@ -4,8 +4,8 @@ default_mailserver="mail.mediaster.cz"
 default_interface="eth0"
 default_addip="n"
 default_sender_ip="81.0.208.20"
-default_wapi_url="http://emailing.mediasun.cz/nejaky-skript.php"
-default_wapi_pass="google123"
+default_wapi_url="http://emailing.mediasun.cz/scripts/setdns.html"
+default_wapi_pass=""
 
 echo -n "Zadej nazev serveru (napr. postster): "
 read server
