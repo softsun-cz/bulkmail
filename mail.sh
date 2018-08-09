@@ -35,6 +35,12 @@ echo -ne $server > /etc/hostname
 echo -ne "" > /etc/motd
 apt-get -y remove man-db install-info vim-tiny nano
 apt-get -y install curl
+
+# make sure that nginx will be in default state
+service nginx stop
+apt-get remove nginx -y
+apt-get purge nginx nginx-common nginx-full
+
 passwd
 
 
