@@ -1,6 +1,6 @@
 #!/bin/bash
 default_timeout=1
-default_mailserver="mail.mediaster.cz"
+default_mailserver="emailing.mediasun.cz"
 default_interface="eth0"
 default_addip="n"
 default_sender_ip="81.0.208.20"
