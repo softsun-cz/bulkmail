@@ -149,10 +149,53 @@ systemctl enable fcgiwrap
 apt-get -y install opendkim opendkim-tools nginx perl sudo php5-fpm
 DEBIAN_FRONTEND=noninteractive apt-get -y install postfix
 
+# DKIM
+mkdir -p /etc/opendkim/keys
+
+echo "localhost" > /etc/opendkim/TrustedHosts
+echo "127.0.0.1" >> /etc/opendkim/TrustedHosts
+echo "${sender}" >> /etc/opendkim/TrustedHosts
+
+echo "mail._domainkey.${domain} mail.${domain}:mail:/etc/opendkim/keys/${domain}/mail.private" > /etc/opendkim/KeyTable
+echo "*@${domain} mail._domainkey.${domain}" > /etc/opendkim/SigningTable
+
+mkdir /etc/opendkim/keys/${domain}
+pushd /etc/opendkim/keys/${domain}
+opendkim-genkey -s mail -h rsa-sha256 -b 2048 -d ${domain}
+popd
+chown -R opendkim:opendkim /etc/opendkim
+
+/etc/init.d/opendkim restart
+
+# send to wapi
+if [ $wapi_enabled -eq 1 ]; then
+    curl --data-urlencode "domain=${domain}" --data-urlencode "mail=${IP_ADRESA}" \
+         --data-urlencode "root=${IP_ADRESA}" --data-urlencode "mx=mail.${domain}" \
+         --data-urlencode "dkim=${resultDKIM}" \
+         --data-urlencode "pass=${wapi_pass}" \
+         "${default_wapi_url}"
+fi
+
 /etc/init.d/nginx stop
-letsencrypt certonly --register-unsafely-without-email --agree-tos --standalone -d mail.${domain} -m info@"${domain}"
-letsencrypt certonly --register-unsafely-without-email --agree-tos --standalone -d ${domain} -m info@"${domain}"
+
+while :; do
+    letsencrypt certonly --register-unsafely-without-email --agree-tos --standalone -d mail.${domain} -m info@"${domain}"
+    if [[ $? -eq 0 ]]; then
+        break
+    fi
+    echo 'Dalsi pokus...'
+    sleep $((10 * 60))
+done
+
+while :; do
+    letsencrypt certonly --register-unsafely-without-email --agree-tos --standalone -d ${domain} -m info@"${domain}"
 /etc/init.d/nginx restart
+    if [[ $? -eq 0 ]]; then
+        break
+    fi
+    echo 'Dalsi pokus...'
+    sleep $((10 * 60))
+done
 
 
 echo "%www-data ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
@@ -228,24 +271,6 @@ postmap /etc/postfix/transport
 postconf -e "transport_maps                  =      hash:/etc/postfix/transport"
 
 
-
-
-mkdir -p /etc/opendkim/keys
-
-echo "localhost" > /etc/opendkim/TrustedHosts
-echo "127.0.0.1" >> /etc/opendkim/TrustedHosts
-echo "${sender}" >> /etc/opendkim/TrustedHosts
-
-echo "mail._domainkey.${domain} mail.${domain}:mail:/etc/opendkim/keys/${domain}/mail.private" > /etc/opendkim/KeyTable
-echo "*@${domain} mail._domainkey.${domain}" > /etc/opendkim/SigningTable
-
-mkdir /etc/opendkim/keys/${domain}
-pushd /etc/opendkim/keys/${domain}
-opendkim-genkey -s mail -h rsa-sha256 -b 2048 -d ${domain}
-popd
-chown -R opendkim:opendkim /etc/opendkim
-
-/etc/init.d/opendkim restart
 /etc/init.d/postfix restart
 
 mkdir /etc/nginx/sites-backuped/
@@ -367,14 +392,6 @@ echo "${IPKA1}.${IPKA2}.${IPKA3}.${DOCASNE} PTR ZAZNAM mail${i}.${domain}" >> /v
 done
 echo "==================================" >> /var/www/html/mail.txt
 
-# send to wapi
-if [ $wapi_enabled -eq 1 ]; then
-    curl --data-urlencode "domain=${domain}" --data-urlencode "mail=${IP_ADRESA}" \
-         --data-urlencode "root=${IP_ADRESA}" --data-urlencode "mx=mail.${domain}" \
-         --data-urlencode "dkim=${resultDKIM}" \
-         --data-urlencode "pass=${wapi_pass}" \
-         "${default_wapi_url}"
-fi
 
 echo "konfiguraci naleznete na http://${IP_ADRESA}/mail.txt" 
 
