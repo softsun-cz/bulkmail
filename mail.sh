@@ -329,8 +329,8 @@ location /cgi-bin/ {
         fastcgi_pass  unix:/var/run/fcgiwrap.socket;
         include /etc/nginx/fastcgi_params;
         fastcgi_param SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+    }
 EOF
-
 echo "  }" >> /etc/nginx/sites-enabled/default
 
 mkdir /var/www/html/cgi-bin/
