@@ -150,8 +150,8 @@ apt-get -y install opendkim opendkim-tools nginx perl sudo php5-fpm
 DEBIAN_FRONTEND=noninteractive apt-get -y install postfix
 
 /etc/init.d/nginx stop
-letsencrypt certonly --agree-tos --standalone -d mail.${domain} -m info@"${domain}"
-letsencrypt certonly --agree-tos --standalone -d ${domain} -m info@"${domain}"
+letsencrypt certonly --register-unsafely-without-email --agree-tos --standalone -d mail.${domain} -m info@"${domain}"
+letsencrypt certonly --register-unsafely-without-email --agree-tos --standalone -d ${domain} -m info@"${domain}"
 /etc/init.d/nginx restart
 
 
