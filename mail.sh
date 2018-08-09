@@ -6,6 +6,7 @@ default_addip="n"
 default_sender_ip="81.0.208.20"
 default_wapi_url="http://emailing.mediasun.cz/scripts/setdns.php"
 default_wapi_pass=""
+cert_wait_interval=$((60 * 10))
 
 echo -n "Zadej nazev serveru (napr. postster): "
 read server
@@ -192,7 +193,7 @@ while :; do
         break
     fi
     echo 'Dalsi pokus...'
-    sleep $((10 * 60))
+    sleep $cert_wait_interval
 done
 
 while :; do
@@ -202,7 +203,7 @@ while :; do
         break
     fi
     echo 'Dalsi pokus...'
-    sleep $((10 * 60))
+    sleep $cert_wait_interval
 done
 
 
