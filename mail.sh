@@ -39,7 +39,7 @@ apt-get -y install curl
 # make sure that nginx will be in default state
 service nginx stop
 apt-get remove nginx -y
-apt-get purge nginx nginx-common nginx-full
+apt-get purge nginx nginx-common nginx-full -y
 
 passwd
 
