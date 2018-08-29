@@ -163,7 +163,7 @@ echo "localhost" > /etc/opendkim/TrustedHosts
 echo "127.0.0.1" >> /etc/opendkim/TrustedHosts
 echo "${sender}" >> /etc/opendkim/TrustedHosts
 
-echo "mail._domainkey.${domain} mail.${domain}:mail:/etc/opendkim/keys/${domain}/mail.private" > /etc/opendkim/KeyTable
+echo "mail._domainkey.${domain} ${domain}:mail:/etc/opendkim/keys/${domain}/mail.private" > /etc/opendkim/KeyTable
 echo "*@${domain} mail._domainkey.${domain}" > /etc/opendkim/SigningTable
 
 mkdir /etc/opendkim/keys/${domain}
