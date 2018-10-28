@@ -173,6 +173,7 @@ popd
 chown -R opendkim:opendkim /etc/opendkim
 
 /etc/init.d/opendkim restart
+service opendkim restart
 
 resultDKIM=$(sed -e 's/"//g' -e "s/.*(\(.*\) ).*/\1;/" -e "s/rsa-sha256/sha256/g" -e "s/;$//g" -e "s/ //g" <<< $(cat /etc/opendkim/keys/${domain}/mail.txt))
 
@@ -463,4 +464,4 @@ exec("sudo postsuper -d ALL");
 </form>
 EOF
 
-
+service opendkim restart
