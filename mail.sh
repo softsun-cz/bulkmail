@@ -34,6 +34,7 @@ fi
 
 echo -ne $server > /etc/hostname
 echo -ne "" > /etc/motd
+apt-get update
 apt-get -y remove man-db install-info vim-tiny nano
 apt-get -y install curl
 
