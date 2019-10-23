@@ -144,7 +144,7 @@ if [ "$addip" = "$ano" ]; then
     /etc/multipleip.sh
 fi
 
-echo 'deb http://ftp.debian.org/debian jessie-backports main' | tee /etc/apt/sources.list.d/backports.list
+echo 'deb http://archive.debian.org/debian jessie-backports main' | tee /etc/apt/sources.list.d/backports.list
 #aktualizace baliku na OS
 apt-get update
 apt update
