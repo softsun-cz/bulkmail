@@ -149,7 +149,13 @@ echo 'deb http://archive.debian.org/debian jessie-backports main' | tee /etc/apt
 apt-get update
 apt update
 #instalovani zakladnich baliku
-apt-get -y install python-certbot-nginx -t jessie-backports
+#apt-get -y install python-certbot-nginx -t jessie-backports
+
+wget https://dl.eff.org/certbot-auto
+sudo mv certbot-auto /usr/local/bin/certbot-auto
+sudo chown root /usr/local/bin/certbot-auto
+sudo chmod 0755 /usr/local/bin/certbot-auto
+
 apt install -y fcgiwrap
 systemctl enable fcgiwrap
 /etc/init.d/fcgiwrap start
@@ -190,7 +196,7 @@ fi
 /etc/init.d/nginx stop
 
 while :; do
-    letsencrypt certonly --register-unsafely-without-email --agree-tos --standalone -d mail.${domain} -m info@"${domain}"
+    certbot-auto certonly --register-unsafely-without-email --agree-tos --standalone -d mail.${domain} -m info@"${domain}"
     if [[ $? -eq 0 ]]; then
         break
     fi
@@ -199,7 +205,7 @@ while :; do
 done
 
 while :; do
-    letsencrypt certonly --register-unsafely-without-email --agree-tos --standalone -d ${domain} -m info@"${domain}"
+    certbot-auto certonly --register-unsafely-without-email --agree-tos --standalone -d ${domain} -m info@"${domain}"
 /etc/init.d/nginx restart
     if [[ $? -eq 0 ]]; then
         break
