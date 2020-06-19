@@ -395,7 +395,7 @@ do
 DOCASNE="$((IPKA4 + i))"
 echo "      TXT v=spf1 ip4:${IPKA1}.${IPKA2}.${IPKA3}.${DOCASNE} -all" >> /var/www/html/mail.txt
 done
-
+echo "mail._domainkey   TXT " >> /var/www/html/mail.txt
 echo $resultDKIM  | sed 's/"//g' >> /var/www/html/mail.txt
 echo "========= NASTAVENI PTR ==========" >> /var/www/html/mail.txt
 echo "${IP_ADRESA} PTR ZAZNAM ${domain}" >> /var/www/html/mail.txt
